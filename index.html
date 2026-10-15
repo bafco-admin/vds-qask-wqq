@@ -701,6 +701,7 @@
             <button class="toolbar-btn" onclick="shareImage()" title="Share directly on mobile"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> Share</button>
             <button class="toolbar-btn" onclick="window.print()" title="Print or save as PDF"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> PDF</button>
             <button class="toolbar-btn" onclick="resetFields()" title="Reset fields to original values"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Reset</button>
+            <button class="toolbar-btn" onclick="clearFields()" title="Clear all fields except Reference ID"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg> Clear Fields</button>
     </div>
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -922,12 +923,27 @@
             });
         });
 
-        // Reset all fields to defaults
+        // Generate a random integer between min and max (inclusive)
+        function getRandomIncrement(min = 20, max = 50) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Increment the reference ID by a random number (20-50) and sync both fields
+        function incrementRefId() {
+            const refEl = document.getElementById('ref-id');
+            const bannerRefEl = document.getElementById('banner-ref-id');
+            const currentRef = parseInt(refEl.textContent.trim(), 10) || 1740159;
+            const newRef = currentRef + getRandomIncrement();
+            const newRefStr = String(newRef);
+            refEl.textContent = newRefStr;
+            bannerRefEl.textContent = newRefStr;
+            return newRefStr;
+        }
+
+        // Reset all fields to defaults and increment the reference ID
         function resetFields() {
             if (confirm('Reset all fields to default values?')) {
                 const defaults = {
-                    'banner-ref-id': '1740159',
-                    'ref-id': '1740159',
                     'txn-type': 'Fund Transfer Other Bank Account',
                     'pay-from': 'MOHANAN M',
                     'counterparty-type': 'Personal Payees',
@@ -945,7 +961,23 @@
                 for (const [id, value] of Object.entries(defaults)) {
                     document.getElementById(id).textContent = value;
                 }
+                const newRef = incrementRefId();
+                showToast(`Fields reset. New Ref ID: ${newRef}`, 3000);
             }
+        }
+
+        // Clear all editable fields except the reference ID, and increment ref ID
+        function clearFields() {
+            const editableIds = [
+                'nickname', 'amount', 'freq-type', 'payment-date',
+                'remarks', 'total-amount', 'charge-amount'
+            ];
+            editableIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = '';
+            });
+            const newRef = incrementRefId();
+            showToast(`Fields cleared. New Ref ID: ${newRef}`, 3000);
         }
     
         // ===== TOAST NOTIFICATION =====
