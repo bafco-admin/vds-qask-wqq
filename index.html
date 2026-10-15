@@ -702,6 +702,7 @@
             <button class="toolbar-btn" onclick="window.print()" title="Print or save as PDF"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> PDF</button>
             <button class="toolbar-btn" onclick="resetFields()" title="Reset fields to original values"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Reset</button>
             <button class="toolbar-btn" onclick="clearFields()" title="Clear all fields except Reference ID"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg> Clear Fields</button>
+            <button class="toolbar-btn" onclick="nextSlip()" title="Increment Reference ID only"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg> Next Slip</button>
     </div>
 
     <!-- ===== MAIN CONTENT ===== -->
@@ -969,7 +970,7 @@
         // Clear all editable fields except the reference ID, and increment ref ID
         function clearFields() {
             const editableIds = [
-                'nickname', 'amount', 'freq-type', 'payment-date',
+                'nickname', 'amount', 'payment-date',
                 'remarks', 'total-amount', 'charge-amount'
             ];
             editableIds.forEach(id => {
@@ -978,6 +979,12 @@
             });
             const newRef = incrementRefId();
             showToast(`Fields cleared. New Ref ID: ${newRef}`, 3000);
+        }
+
+        // Only increment the reference ID without changing anything else
+        function nextSlip() {
+            const newRef = incrementRefId();
+            showToast(`Next slip. New Ref ID: ${newRef}`, 3000);
         }
     
         // ===== TOAST NOTIFICATION =====
